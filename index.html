@@ -1,0 +1,321 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudySync — Academic Task, Notes &amp; Study Planner Portal</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+              950: '#1e1b4b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Smooth transitions and custom scrollbar */
+    html {
+      scroll-behavior: smooth;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    .tab-panel {
+      animation: fadeSlideIn 0.22s ease-out;
+    }
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    /* Custom subtle scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-3">
+        
+        <!-- Brand Logo & Title -->
+        <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="switchTab('overview')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-slate-900 flex items-center justify-center text-white shadow-sm">
+            <!-- Custom Academic Sync SVG Icon -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-lg font-extrabold tracking-tight text-slate-900">StudySync</span>
+              <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/80">
+                MERN Portal
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500 hidden md:block leading-none mt-0.5">Academic Task, Notes &amp; Study Planner</p>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Tabs -->
+        <nav class="hidden lg:flex items-center gap-1.5 bg-slate-100/90 p-1 rounded-xl border border-slate-200/70" aria-label="Main Navigation">
+          <button onclick="switchTab('overview')" id="nav-desktop-overview" class="nav-tab-desktop px-3.5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-white text-indigo-700 shadow-xs">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            Home / Overview
+          </button>
+          <button onclick="switchTab('tasks')" id="nav-desktop-tasks" class="nav-tab-desktop px-3.5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            Task Manager
+            <span id="badge-pending-nav" class="px-1.5 py-0.2 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-700">0</span>
+          </button>
+          <button onclick="switchTab('notes')" id="nav-desktop-notes" class="nav-tab-desktop px-3.5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Subject Notes
+            <span id="badge-notes-nav" class="px-1.5 py-0.2 rounded-full text-[11px] font-bold bg-slate-200 text-slate-700">0</span>
+          </button>
+          <button onclick="switchTab('auth')" id="nav-desktop-auth" class="nav-tab-desktop px-3.5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            Student Portal
+          </button>
+        </nav>
+
+        <!-- Right Side: Sync Status & Student Profile Badge -->
+        <div class="flex items-center gap-2.5">
+          <!-- Simulated REST API Sync Indicator -->
+          <div id="api-sync-pill" class="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="api-sync-text">JWT Active</span>
+          </div>
+
+          <!-- Student Profile Badge -->
+          <button onclick="switchTab('auth')" class="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl bg-slate-50 hover:bg-indigo-50/70 border border-slate-200/90 hover:border-indigo-200 transition-all text-left group">
+            <div id="header-avatar" class="w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs group-hover:bg-indigo-700 transition-colors">
+              VM
+            </div>
+            <div class="leading-tight">
+              <div id="header-student-name" class="text-xs sm:text-sm font-bold text-slate-900">Veeresh Melkundi</div>
+              <div id="header-student-meta" class="text-[11px] font-mono text-slate-500">ENG25AD0226 • Sec D</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile / Tablet Navigation Bar -->
+      <nav class="flex lg:hidden items-center gap-1.5 pb-2.5 overflow-x-auto no-scrollbar" aria-label="Mobile Navigation">
+        <button onclick="switchTab('overview')" id="nav-mobile-overview" class="nav-tab-mobile shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white">
+          Home / Overview
+        </button>
+        <button onclick="switchTab('tasks')" id="nav-mobile-tasks" class="nav-tab-mobile shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+          Task Manager
+        </button>
+        <button onclick="switchTab('notes')" id="nav-mobile-notes" class="nav-tab-mobile shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+          Subject Notes
+        </button>
+        <button onclick="switchTab('auth')" id="nav-mobile-auth" class="nav-tab-mobile shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+          Student Portal
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT WORKSPACE -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 1: HOME / OVERVIEW                                               -->
+    <!-- ===================================================================== -->
+    <section id="view-overview" class="tab-panel space-y-6">
+      
+      <!-- Academic Hero Banner -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900 text-white p-6 sm:p-8 shadow-md border border-indigo-800/60">
+        <!-- Decorative subtle background grid -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#818cf8 1px, transparent 1px); background-size: 20px 20px;"></div>
+        
+        <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-2.5 max-w-2xl">
+            <div class="inline-flex flex-wrap items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-indigo-200 text-xs font-medium">
+              <span>Dayananda Sagar University</span>
+              <span>•</span>
+              <span id="hero-dept-badge">Dept. of CSE (AI&amp;DS)</span>
+              <span>•</span>
+              <span id="hero-sec-badge">Section D</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              Welcome back, <span id="hero-student-name" class="text-indigo-300">Veeresh Melkundi</span>
+            </h1>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              Manage your B.Tech semester assignments, laboratory evaluation deadlines, and subject-wise revision notes in one centralized full-stack workspace.
+            </p>
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <button onclick="switchTab('tasks')" class="px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-semibold shadow-sm transition-all flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                Open Task Manager
+              </button>
+              <button onclick="switchTab('notes')" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-sm font-semibold transition-all">
+                Explore Subject Notes
+              </button>
+            </div>
+          </div>
+
+          <!-- Semester Completion Ring / Card -->
+          <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-5 min-w-[260px] shrink-0">
+            <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-indigo-200 mb-2">
+              <span>Semester Progress</span>
+              <span id="hero-usn-label" class="font-mono text-white">ENG25AD0226</span>
+            </div>
+            <div class="flex items-baseline gap-2 mb-3">
+              <span id="overview-completion-pct" class="text-3xl font-extrabold text-white">0%</span>
+              <span class="text-xs text-slate-300">of tasks completed</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-800/80 rounded-full overflow-hidden">
+              <div id="overview-completion-bar" class="h-full bg-gradient-to-r from-indigo-400 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+              <span>Course: Full Stack Dev</span>
+              <span class="text-emerald-300 font-semibold">● Online</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Academic Productivity Metric Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Total Tasks -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Tasks</span>
+            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span id="metric-total-tasks" class="text-3xl font-extrabold text-slate-900">0</span>
+            <span class="text-xs font-medium text-slate-500">Across 5 subjects</span>
+          </div>
+        </div>
+
+        <!-- Completed Tasks -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Completed</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span id="metric-completed-tasks" class="text-3xl font-extrabold text-emerald-600">0</span>
+            <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Submitted</span>
+          </div>
+        </div>
+
+        <!-- Pending Tasks -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Pending</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span id="metric-pending-tasks" class="text-3xl font-extrabold text-amber-600">0</span>
+            <span id="metric-high-priority-tag" class="text-xs font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full">0 High Priority</span>
+          </div>
+        </div>
+
+        <!-- Subject Notes Count -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Subject Notes</span>
+            <div class="w-9 h-9 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            </div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span id="metric-total-notes" class="text-3xl font-extrabold text-violet-600">0</span>
+            <span class="text-xs font-medium text-slate-500">Revision guides</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overview Grid: Left (Quick-Add & Subject Breakdown) | Right (Deadlines Timeline & Recent Notes) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left 5 Columns -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Quick-Add Task Widget -->
+          <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h2 class="text-base font-bold text-slate-900">Quick-Add Academic Task</h2>
+                <p class="text-xs text-slate-500">Instantly log an assignment or lab submission</p>
+              </div>
+              <span class="px-2 py-1 rounded-md bg-slate-100 font-mono text-[11px] text-slate-600">POST /tasks</span>
+            </div>
+
+            <form onsubmit="handleQuickAddTask(event)" class="space-y-3.5">
+              <div>
+                <label for="quick-task-title" class="block text-xs font-semibold text-slate-700 mb-1">Task / Assignment Title</label>
+                <input id="quick-task-title" type="text" required placeholder="e.g., Implement Dijkstra's Algorithm in C++" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all" />
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="quick-task-subject" class="block text-xs font-semibold text-slate-700 mb-1">Subject</label>
+                  <select id="quick-task-subject" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500">
+                    <option value="Full Stack Dev">Full Stack Dev</option>
+                    <option value="AI & ML">AI &amp; ML</option>
+                    <option value="Data Structures">Data Structures</option>
+                    <option value="DBMS">DBMS</option>
+                    <option value="Applied Statistics">Applied Statistics</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="quick-task-priority" class="block text-xs font-semibold text-slate-700 mb-1">Priority</label>
+                  <select id="quick-task-priority" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500">
+                    <option value="High">High Priority</option>
+                    <option value="Medium" sel
